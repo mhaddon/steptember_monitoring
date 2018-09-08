@@ -1,0 +1,6 @@
+node_modules
+pdfs
+package-lock.json
+steptember.env
+mysql
+grafana

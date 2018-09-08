@@ -1,0 +1,47 @@
+version: "2"
+services:
+  steptember-scraper:
+    image: steptember-scraper
+    restart: always
+    depends_on:
+    - db
+    links:
+    - db
+    environment:
+    - MYSQL_PASSWORD=steptember
+    - MYSQL_USERNAME=root
+    - MYSQL_DOMAIN=db
+    - MYSQL_PORT=3306
+    - MYSQL_DATABASE=steptember
+    env_file:
+    - steptember.env
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+    - ./mysql:/var/lib/mysql
+    environment:
+    - MYSQL_ROOT_PASSWORD=steptember
+    - MYSQL_DATABASE=steptember
+    ports:
+    - 3306:3306
+  adminer:
+    image: adminer
+    restart: always
+    links:
+    - db
+    ports:
+    - 8080:8080
+  grafana:
+    image: steptember-grafana
+    ports:
+    - 3000:3000
+    volumes:
+    - ./grafana:/var/lib/grafana
+    depends_on:
+    - db
+    links:
+    - db
+    restart: always
+    environment:
+    - GF_SECURITY_ADMIN_PASSWORD=secret

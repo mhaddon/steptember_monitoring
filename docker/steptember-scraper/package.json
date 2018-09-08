@@ -1,0 +1,15 @@
+{
+  "name": "steptember-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "puppeteer": "^1.7.0"
+  }
+}

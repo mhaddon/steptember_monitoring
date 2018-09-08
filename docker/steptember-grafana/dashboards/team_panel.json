@@ -1,0 +1,53 @@
+{
+  "columns": [],
+  "datasource": "db",
+  "fontSize": "100%",
+  "gridPos": {
+    "h": 32,
+    "w": 24,
+    "x": 0,
+    "y": 0
+  },
+  "id": 2,
+  "links": [],
+  "pageSize": null,
+  "scroll": true,
+  "showHeader": true,
+  "sort": {
+    "col": 0,
+    "desc": true
+  },
+  "styles": [
+    {
+      "alias": "Time",
+      "dateFormat": "YYYY-MM-DD HH:mm:ss",
+      "pattern": "Time",
+      "type": "date"
+    },
+    {
+      "alias": "",
+      "colorMode": null,
+      "colors": [
+        "rgba(245, 54, 54, 0.9)",
+        "rgba(237, 129, 40, 0.89)",
+        "rgba(50, 172, 45, 0.97)"
+      ],
+      "decimals": 2,
+      "pattern": "/.*/",
+      "thresholds": [],
+      "type": "number",
+      "unit": "short"
+    }
+  ],
+  "targets": [
+    {
+      "alias": "",
+      "format": "table",
+      "rawSql": "SELECT `teams`.`name` as 'team_name', SUM(`subquery`.`distance`) as 'distance', SUM(`subquery`.`steps`) as 'steps', SUM(`subquery`.`calories_burnt`) as 'calories_burnt' FROM teams, (SELECT `participants`.`team_id` as 'team_id', `participants`.`name`, MAX(`records`.`distance`) as 'distance', MAX(`records`.`steps`) as 'steps', MAX(`records`.`calories_burnt`) as 'calories_burnt' from `records` inner join `participants` ON `records`.`participant_id`=`participants`.`id` group by `records`.`participant_id`) subquery WHERE `teams`.`id` = `subquery`.`team_id` GROUP BY `subquery`.`team_id`",
+      "refId": "A"
+    }
+  ],
+  "title": "Team Scores",
+  "transform": "table",
+  "type": "table"
+}
