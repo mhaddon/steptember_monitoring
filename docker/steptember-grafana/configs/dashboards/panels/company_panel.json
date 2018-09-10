@@ -23,7 +23,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
+      "fill": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -41,7 +41,7 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
@@ -56,7 +56,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n  `teams`.`name` as 'team_name', \n  `subquery`.`steps` as 'steps',\n  `subquery`.`time` as 'time'\nFROM teams, (\n    SELECT  \n      MAX(`participants`.`team_id`) as 'team_id',\n      SUM(`records`.`steps`) as 'steps', \n      MAX(`records`.`time`) as 'time'\n    FROM `records` \n    INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\n    GROUP BY UNIX_TIMESTAMP(`records`.`time`) DIV 300, `participants`.`team_id`\n) subquery \nWHERE `teams`.`id` = `subquery`.`team_id`",
+          "rawSql": "SELECT \n  `teams`.`name` as 'team_name', \n  `subquery`.`steps` as 'steps',\n  `subquery`.`time` as 'time'\nFROM teams, (\n    SELECT  \n      MAX(`participants`.`team_id`) as 'team_id',\n      SUM(`records`.`steps`) as 'steps', \n      MAX(`records`.`time`) as 'time'\n    FROM `records` \n    INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\n    GROUP BY UNIX_TIMESTAMP(`records`.`time`) DIV 300, `participants`.`team_id`\n) subquery \nWHERE `teams`.`id` = `subquery`.`team_id` AND $__timeFilter(`subquery`.`time`)\nORDER BY `subquery`.`time` DESC",
           "refId": "A"
         }
       ],
@@ -107,7 +107,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
+      "fill": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -144,7 +144,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n    `participants`.`name` as 'metric',\n    `records`.`steps` as 'value', \n    `records`.`time` as 'time'\nFROM `records` \nINNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`",
+          "rawSql": "SELECT \n    `participants`.`name` as 'metric',\n    `records`.`steps` as 'value', \n    `records`.`time` as 'time'\nFROM `records` \nINNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\nWHERE $__timeFilter(`records`.`time`)\nORDER BY `records`.`time` DESC",
           "refId": "A"
         }
       ],
@@ -204,8 +204,8 @@
       "scroll": true,
       "showHeader": true,
       "sort": {
-        "col": 1,
-        "desc": true
+        "col": null,
+        "desc": false
       },
       "styles": [
         {
