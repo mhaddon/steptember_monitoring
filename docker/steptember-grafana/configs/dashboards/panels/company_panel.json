@@ -233,7 +233,7 @@
         {
           "alias": "",
           "format": "table",
-          "rawSql": "SELECT \n  SUM(`subquery`.`distance`) as 'distance',\n  SUM(`subquery`.`steps`) as 'steps',\n  SUM(`subquery`.`calories_burnt`) as 'calories_burnt'\nFROM (\n    SELECT\n      MAX(`records`.`participant_id`) as 'id',\n      MAX(`records`.`distance`) as 'distance',\n      MAX(`records`.`steps`) as 'steps',\n      MAX(`records`.`calories_burnt`) as 'calories_burnt'\n    FROM `records`\n    INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\n    GROUP BY `records`.`participant_id`\n) as subquery",
+          "rawSql": "SELECT \n  SUM(`subquery`.`distance`) as 'distance',\n  SUM(`subquery`.`steps`) as 'steps',\n  SUM(`subquery`.`calories_burnt`) as 'calories_burnt'\nFROM (\n    SELECT\n      MAX(`records`.`participant_id`) as 'id',\n      MAX(`records`.`distance`) as 'distance',\n      MAX(`records`.`steps`) as 'steps',\n      MAX(`records`.`calories_burnt`) as 'calories_burnt'\n    FROM `records`\n    INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\n    WHERE $__timeFilter(`records`.`time`)\n    GROUP BY `records`.`participant_id`\n) as subquery",
           "refId": "A"
         }
       ],
@@ -286,7 +286,7 @@
         {
           "alias": "",
           "format": "table",
-          "rawSql": "SELECT\n  `participants`.`name`,\n  MAX(`records`.`distance`) as 'distance',\n  MAX(`records`.`steps`) as 'steps',\n  MAX(`records`.`calories_burnt`) as 'calories_burnt'\nFROM `records`\nINNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\nGROUP BY `records`.`participant_id`",
+          "rawSql": "SELECT\n  `participants`.`name`,\n  MAX(`records`.`distance`) as 'distance',\n  MAX(`records`.`steps`) as 'steps',\n  MAX(`records`.`calories_burnt`) as 'calories_burnt',\n  MAX(`records`.`steps`) - MAX(`subquery`.`growth`) as 'growth'\nFROM `records`\nINNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\nINNER JOIN (\n    SELECT\n      MAX(`records`.`steps`) as 'growth',\n      `records`.`participant_id` as 'participant_id'\n    FROM `records`\n      INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id`\n      WHERE `records`.`time` >= FROM_UNIXTIME($__unixEpochFrom() - ($__unixEpochTo() - $__unixEpochFrom()))\n      AND `records`.`time` <= $__timeFrom()\n     GROUP BY `records`.`participant_id`\n) as subquery ON `records`.`participant_id`=`subquery`.`participant_id`\nWHERE $__timeFilter(`records`.`time`)\nGROUP BY `records`.`participant_id`",
           "refId": "A"
         }
       ],
@@ -339,7 +339,7 @@
         {
           "alias": "",
           "format": "table",
-          "rawSql": "SELECT \n  `teams`.`name` as 'team_name', \n  SUM(`subquery`.`distance`) as 'distance', \n  SUM(`subquery`.`steps`) as 'steps', \n  SUM(`subquery`.`calories_burnt`) as 'calories_burnt' \nFROM teams, (\n    SELECT \n      `participants`.`team_id` as 'team_id', \n      `participants`.`name`, \n      MAX(`records`.`distance`) as 'distance', \n      MAX(`records`.`steps`) as 'steps', \n      MAX(`records`.`calories_burnt`) as 'calories_burnt' \n    FROM `records` \n    INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id` \n    GROUP BY `records`.`participant_id`\n) subquery \nWHERE `teams`.`id` = `subquery`.`team_id` \nGROUP BY `subquery`.`team_id`",
+          "rawSql": "SELECT \n  `teams`.`name` as 'team_name', \n  SUM(`subquery`.`distance`) as 'distance', \n  SUM(`subquery`.`steps`) as 'steps', \n  SUM(`subquery`.`calories_burnt`) as 'calories_burnt' \nFROM teams, (\n    SELECT \n      `participants`.`team_id` as 'team_id', \n      `participants`.`name`, \n      MAX(`records`.`distance`) as 'distance', \n      MAX(`records`.`steps`) as 'steps', \n      MAX(`records`.`calories_burnt`) as 'calories_burnt' \n    FROM `records` \n    INNER JOIN `participants` ON `records`.`participant_id`=`participants`.`id` \n    WHERE $__timeFilter(`records`.`time`)\n    GROUP BY `records`.`participant_id`\n) subquery \nWHERE `teams`.`id` = `subquery`.`team_id` \nGROUP BY `subquery`.`team_id`",
           "refId": "A"
         }
       ],
@@ -348,6 +348,7 @@
       "type": "table"
     }
   ],
+  "refresh": false,
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
