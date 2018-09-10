@@ -7,24 +7,16 @@ services:
     - db
     links:
     - db
-    environment:
-    - MYSQL_PASSWORD=steptember
-    - MYSQL_USERNAME=root
-    - MYSQL_DOMAIN=db
-    - MYSQL_PORT=3306
-    - MYSQL_DATABASE=steptember
     env_file:
     - steptember.env
+    - mysql.env
   db:
     image: mysql:5.7
     restart: always
     volumes:
     - ./mysql:/var/lib/mysql
-    environment:
-    - MYSQL_ROOT_PASSWORD=steptember
-    - MYSQL_DATABASE=steptember
-    ports:
-    - 3306:3306
+    env_file:
+    - mysql.env
   adminer:
     image: adminer
     restart: always
@@ -43,5 +35,7 @@ services:
     links:
     - db
     restart: always
+    env_file:
+    - mysql.env
     environment:
     - GF_SECURITY_ADMIN_PASSWORD=secret

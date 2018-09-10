@@ -1,0 +1,19 @@
+apiVersion: 1
+
+deleteDatasources:
+   - name: MySQL
+     orgId: 1
+
+datasources:
+ - name: MySQL
+   type: mysql
+   access: proxy
+   orgId: 1
+   url: ${MYSQL_DOMAIN}:${MYSQL_PORT}
+   password: ${MYSQL_PASSWORD}
+   user: ${MYSQL_USERNAME}
+   database: ${MYSQL_DATABASE}
+   isDefault: true
+   jsonData:
+      keepCookies: []
+   version: 1
