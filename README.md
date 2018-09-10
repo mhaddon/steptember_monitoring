@@ -19,11 +19,12 @@ Then you need to build the docker containers (build.sh)
 
 Then you need to start docker-compose (docker-composer up)
 
-The application exposes port 8080 for adminer and 3000 for grafana
-
 ### How to Access
 
+The application exposes port 8080 for adminer and 3000 for grafana
+
 The Grafana login is root, and the password is defined in docker-compose.yml
+
 The MySQL login is defined in mysql.env
 
 ### Known Bugs
